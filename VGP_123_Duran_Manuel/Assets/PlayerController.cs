@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
     
     bool IsFalling()
     {
-        return rb.velocity.y < 0.1;
+        return rb.velocity.y < 0;
     }
     bool IsJumping()
     {

@@ -16,14 +16,13 @@ public class PlayerController : MonoBehaviour
     [Range(3, 10)]
     public float speed = 5.5f;
     [Range(3, 10)]
-    public float jumpForce = 3f;
+    public float jumpForce = 10f;
 
     //Ground Check Variables
     [Range(0.01f, 0.1f)]
     public float groundCheckRadius = 0.02f;
     public LayerMask isGroundLayer;
     bool isGrounded = false;
-    Transform groundCheck;
 
     // Start is called before the first frame update
     void Start()
@@ -36,14 +35,12 @@ public class PlayerController : MonoBehaviour
         GameObject newGameObject = new GameObject();
         newGameObject.transform.SetParent(transform);
         newGameObject.transform.localPosition = Vector3.zero;
-        newGameObject.name = "GroundCheck";
-        groundCheck = newGameObject.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        CheckIsGrounded();
+        
 
 
 
@@ -51,12 +48,22 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(hInput * speed, rb.velocity.y);
 
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump"))
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
         }
 
+        if(IsFalling())
+        {
+            anim.SetBool("IsJumping", false);
+            anim.SetBool("IsFalling", true);
+        }
+        if (IsJumping())
+        {
+            anim.SetBool("IsJumping", true);
+            anim.SetBool("IsFalling", false);
+        }
         //sprite flipping
         if (hInput != 0) sr.flipX = (hInput < 0);
 
@@ -64,15 +71,16 @@ public class PlayerController : MonoBehaviour
         //if (hInput > 0 && sr.flipX || hInput < 0 && !sr.flipX) sr.flipX = !sr.flipX;
 
         anim.SetFloat("speed", Mathf.Abs(hInput));
-        anim.SetBool("isGrounded", isGrounded);
+        
     }
 
-    void CheckIsGrounded()
+    
+    bool IsFalling()
     {
-        if (!isGrounded)
-        {
-            if (rb.velocity.y <= 0) isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, isGroundLayer);
-        }
-        else isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, isGroundLayer);
+        return rb.velocity.y < 0.1;
+    }
+    bool IsJumping()
+    {
+        return rb.velocity.y > 0;
     }
 }

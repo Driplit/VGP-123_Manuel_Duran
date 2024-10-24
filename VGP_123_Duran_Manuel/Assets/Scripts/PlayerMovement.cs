@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,18 +10,31 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float Speed;
     [SerializeField] private float JumpForce;
     [SerializeField] private float WallJumpForce;
+    
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Transform wallCheck;
+    [SerializeField] private TrailRenderer tr;
+    [SerializeField] private float wallSlidingSpeed;
     
+    [Header("Dash Settings")]
+    [SerializeField] private float DashForce;
+    private bool canDash;
+    private bool isDashing;
+    [SerializeField] private float dashingDuration = 1f;
+    [SerializeField] float dashingCD = 1f;
+
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Animator anim;
     private BoxCollider2D boxCollider;
     private float wallJumpCD;
     private float horInput;
-    private float wallSlidingSpeed;
     private bool isWallSliding;
+
+   
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,8 +48,20 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDashing) { return; }
+        //player controller interactions
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Jump();
+        }
+        if (Input.GetKey(KeyCode.K))
+        {
+            StartCoroutine(Dash());
+            canDash = true;
+
+        }
         horInput = Input.GetAxis("Horizontal");
-        //going up or down
+        //check if going up or down
         float verVelocity = rb.velocity.y;
 
         //movement Left and Right
@@ -48,11 +74,13 @@ public class PlayerMovement : MonoBehaviour
         anim.SetBool("Grounded", isGrounded());
         anim.SetBool("Rising", verVelocity > 0);
         anim.SetBool("Falling", verVelocity < 0);
-        anim.SetBool("Dashing", isGrounded() && !isGrounded());
+        anim.SetBool("Dashing", isDashing);
         anim.SetBool("OnWall", isWalled());
 
+        wallSlide();
 
-        //wall jump logic
+
+       
     }
     void Jump()
     {
@@ -65,18 +93,25 @@ public class PlayerMovement : MonoBehaviour
         {
             if(horInput == 0)
             {
-                //chach back to the varible names i made (WallJumpForce, JumpForce)
-                rb.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * 10, 0);
+                
+                rb.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * WallJumpForce, JumpForce);
                 transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
             else
             rb.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * 3, 6);
             wallJumpCD = 0;
-        }
-            
+        }       
     }
-    void OnCollisionEnter2D(Collision2D collision) 
+    //DASHING
+    private IEnumerator Dash()
     {
+        isDashing = true;
+        rb.velocity = new Vector2(horInput * DashForce, 0);
+        rb.gravityScale = 0;
+        yield return new WaitForSeconds(dashingDuration);
+        rb.gravityScale = 1;
+        isDashing = false;
+
     }
     //GROUNDED
     private bool isGrounded()
@@ -88,14 +123,17 @@ public class PlayerMovement : MonoBehaviour
     //WALLED
     private bool isWalled()
     {
-        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallLayer);
+        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, new Vector2(transform.localScale.x, 0), 0.5f, wallLayer);
+
+        return raycastHit.collider != null;
     }
+    //wallsliding ideas
     private void wallSlide()
     {
         if(isWalled() && !isGrounded() && horInput !=0f)
         {
             isWallSliding = true;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, - wallSligingSpeed, float.MaxValue));
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, - wallSlidingSpeed, float.MaxValue));
         }
         else
         {
@@ -103,7 +141,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     //ATTACK
-    // public bool canAttack()
-    //    { return horInput == 0&& isGrounded() && !onWall(); }
-
+    public bool canAttack()
+    {
+        return isGrounded() && !isWalled();
+    }
 }

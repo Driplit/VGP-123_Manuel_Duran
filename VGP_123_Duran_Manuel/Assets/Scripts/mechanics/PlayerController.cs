@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
         //if (hInput > 0 && sr.flipX || hInput < 0 && !sr.flipX) sr.flipX = !sr.flipX;
 
         anim.SetFloat("speed", Mathf.Abs(hInput));
-        anim.SetBool("isGrounded")
+
     }
 
 

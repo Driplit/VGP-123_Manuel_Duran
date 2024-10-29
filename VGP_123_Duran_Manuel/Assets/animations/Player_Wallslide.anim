@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Player_Dash
+  m_Name: Player_Wallslide
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,19 +21,11 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 486f9273843bc9948aaa841e9f606227, type: 3}
-    - time: 0.1
-      value: {fileID: 21300000, guid: be4815228f7390344be31073ba9ab474, type: 3}
-    - time: 0.2
-      value: {fileID: 21300000, guid: 8199ed00d0b62b0479ee2767ed6e27bc, type: 3}
-    - time: 0.3
-      value: {fileID: 21300000, guid: e8a7040c98bb4db4f9fc6010bbe0493a, type: 3}
-    - time: 0.38333333
-      value: {fileID: 21300000, guid: 280271be7b3730543b6501a398875da2, type: 3}
-    - time: 0.48333332
-      value: {fileID: 21300000, guid: 8881921eb2b20f043b0d20c056aae668, type: 3}
-    - time: 0.5833333
-      value: {fileID: 21300000, guid: 8426594debd68d24ba6e572dd5021a29, type: 3}
+      value: {fileID: 21300000, guid: 299bd7d8b30fe5443b498d3a296401d3, type: 3}
+    - time: 0.21666667
+      value: {fileID: 21300000, guid: 52a971d7d41ca2549a6cd40ec4fe5573, type: 3}
+    - time: 0.41666666
+      value: {fileID: 21300000, guid: d43f764243eeb4e4bbbf09eed40c3b0b, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -56,19 +48,15 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 486f9273843bc9948aaa841e9f606227, type: 3}
-    - {fileID: 21300000, guid: be4815228f7390344be31073ba9ab474, type: 3}
-    - {fileID: 21300000, guid: 8199ed00d0b62b0479ee2767ed6e27bc, type: 3}
-    - {fileID: 21300000, guid: e8a7040c98bb4db4f9fc6010bbe0493a, type: 3}
-    - {fileID: 21300000, guid: 280271be7b3730543b6501a398875da2, type: 3}
-    - {fileID: 21300000, guid: 8881921eb2b20f043b0d20c056aae668, type: 3}
-    - {fileID: 21300000, guid: 8426594debd68d24ba6e572dd5021a29, type: 3}
+    - {fileID: 21300000, guid: 299bd7d8b30fe5443b498d3a296401d3, type: 3}
+    - {fileID: 21300000, guid: 52a971d7d41ca2549a6cd40ec4fe5573, type: 3}
+    - {fileID: 21300000, guid: d43f764243eeb4e4bbbf09eed40c3b0b, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.59999996
+    m_StopTime: 0.43333334
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -87,11 +75,4 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events:
-  - time: 0.38333333
-    functionName: endDash
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
+  m_Events: []

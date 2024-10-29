@@ -8,15 +8,14 @@ public class PlayerMovement : MonoBehaviour
 
 
     [SerializeField] private float Speed;
-    [SerializeField] private float JumpForce;
     [SerializeField] private float WallJumpForce;
-    
+
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private TrailRenderer tr;
     [SerializeField] private float wallSlidingSpeed;
-    
+
     [Header("Dash Settings")]
     [SerializeField] private float DashForce;
     private bool canDash;
@@ -32,8 +31,8 @@ public class PlayerMovement : MonoBehaviour
     private float horInput;
     private bool isWallSliding;
 
-   
-    
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -43,22 +42,23 @@ public class PlayerMovement : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
+        
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         if (isDashing) { return; }
-        //player controller interactions
-        if (Input.GetKey(KeyCode.Space))
-        {
-            Jump();
-        }
+        //player controller interaction
         if (Input.GetKey(KeyCode.K))
         {
-            StartCoroutine(Dash());
-            canDash = true;
+            anim.SetBool("isDashing", true);
 
+        }
+        if (Input.GetKey(KeyCode.J))
+        {
+            anim.SetBool("isAttacking", true);
         }
         horInput = Input.GetAxis("Horizontal");
         //check if going up or down
@@ -74,75 +74,53 @@ public class PlayerMovement : MonoBehaviour
         anim.SetBool("Grounded", isGrounded());
         anim.SetBool("Rising", verVelocity > 0);
         anim.SetBool("Falling", verVelocity < 0);
-        anim.SetBool("Dashing", isDashing);
         anim.SetBool("OnWall", isWalled());
 
-        wallSlide();
 
 
-       
+
+        Debug.Log(isWalled());
+
     }
-    void Jump()
+    //ATTACKING
+    public void endAttack()
     {
-        if (isGrounded())
-        {
-            rb.velocity = new Vector2(rb.velocity.x, JumpForce);
-            anim.SetTrigger("Jump");
-        }
-        else if (isWalled() && !isGrounded())
-        {
-            if(horInput == 0)
-            {
-                
-                rb.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * WallJumpForce, JumpForce);
-                transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-            }
-            else
-            rb.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * 3, 6);
-            wallJumpCD = 0;
-        }       
+
+        anim.SetBool("isAttacking", false);
     }
+   
     //DASHING
-    private IEnumerator Dash()
+    public void endDash()
     {
-        isDashing = true;
-        rb.velocity = new Vector2(horInput * DashForce, 0);
-        rb.gravityScale = 0;
-        yield return new WaitForSeconds(dashingDuration);
-        rb.gravityScale = 1;
-        isDashing = false;
-
+        anim.SetBool("isDashing", false);
     }
     //GROUNDED
-    private bool isGrounded()
+  /* void CheckIsGrounded()
+    {
+        if (!isGrounded)
+        {
+            if (rb.velocity.y <= 0) isGrounded = gc.IsGrounded();
+        }
+    }*/
+    bool isGrounded()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
 
         return raycastHit.collider != null;
     }
-    //WALLED
     private bool isWalled()
     {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, new Vector2(transform.localScale.x, 0), 0.5f, wallLayer);
-
-        return raycastHit.collider != null;
-    }
-    //wallsliding ideas
-    private void wallSlide()
-    {
-        if(isWalled() && !isGrounded() && horInput !=0f)
+        if (horInput > 0)
         {
-            isWallSliding = true;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, - wallSlidingSpeed, float.MaxValue));
+            RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.right, 0.1f, wallLayer);
+            return raycastHit.collider != null;
+
         }
         else
         {
-            isWallSliding = false;
+            RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.left, 0.1f, wallLayer);
+            return raycastHit.collider != null;
+
         }
-    }
-    //ATTACK
-    public bool canAttack()
-    {
-        return isGrounded() && !isWalled();
     }
 }
